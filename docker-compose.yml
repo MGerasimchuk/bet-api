@@ -1,0 +1,70 @@
+version: "3.8"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    restart: "no"
+    volumes:
+      - ./internal/infrastructure/config/config.yml:/app/config.yml
+    environment:
+      CONFIG_FILE: "/app/config.yml"
+    depends_on:
+      - "db"
+    ports:
+      - 80:80
+    entrypoint: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; /app/api'
+  canceller:
+    build:
+      context: .
+      dockerfile: docker/canceller/Dockerfile
+    restart: "no"
+    volumes:
+      - ./internal/infrastructure/config/config.yml:/app/config.yml
+    environment:
+      CONFIG_FILE: "/app/config.yml"
+    depends_on:
+      - "db"
+    entrypoint: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; /app/canceller'
+
+  db:
+    image: postgres:9.6.18
+    restart: "no"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+  migrations-up:
+    image: postgres:9.6.18
+    restart: "no"
+    depends_on:
+      - "db"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    command: >
+      bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; psql -c "
+      CREATE  TABLE accounts (
+      	id                   varchar(255)  NOT NULL ,
+      	balance              numeric(8,2)  NOT NULL ,
+      	CONSTRAINT pk_accounts_id PRIMARY KEY ( id )
+       );
+
+      CREATE  TABLE transactions (
+      	id                   varchar(255)  NOT NULL ,
+      	account_id           varchar(255)  NOT NULL ,
+      	amount               decimal(8,2)  NOT NULL ,
+      	status               varchar(25)   NOT NULL ,
+      	source               varchar(255)  NOT NULL ,
+      	created_at           timestamp     NOT NULL ,
+      	updated_at           timestamp     NOT NULL ,
+      	CONSTRAINT pk_transactions_id PRIMARY KEY ( id ),
+      	CONSTRAINT fk_transactions_accounts FOREIGN KEY ( account_id ) REFERENCES accounts( id )
+       );
+
+      INSERT INTO accounts (id, balance) VALUES ('\''1bb63387-a1df-4158-96ec-8c6077f689ec'\'', 0);
+      "'

@@ -1,0 +1,520 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/MGerasimchuk/bet-api/internal/domain/model/account.go (100.0%)</option>
+				
+				<option value="file1">github.com/MGerasimchuk/bet-api/internal/domain/model/bet.go (100.0%)</option>
+				
+				<option value="file2">github.com/MGerasimchuk/bet-api/internal/domain/model/transaction.go (100.0%)</option>
+				
+				<option value="file3">github.com/MGerasimchuk/bet-api/internal/domain/service/change_account_balance.go (50.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package model
+
+import (
+        "errors"
+)
+
+type Account struct {
+        id      string
+        balance float64
+}
+
+func NewAccount(id string, balance float64) *Account <span class="cov10" title="6">{
+        return &amp;Account{id: id, balance: balance}
+}</span>
+
+func (a *Account) ID() string <span class="cov4" title="2">{
+        return a.id
+}</span>
+
+func (a *Account) Balance() float64 <span class="cov6" title="3">{
+        return a.balance
+}</span>
+
+func (a *Account) Validate() error <span class="cov7" title="4">{
+        if err := a.validateID(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov6" title="3">if err := a.validateBalance(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">return nil</span>
+}
+
+func (a *Account) validateID() error <span class="cov10" title="6">{
+        if a.id == "" </span><span class="cov4" title="2">{
+                return errors.New("value of \"id\" field can't be empty")
+        }</span>
+
+        <span class="cov7" title="4">return nil</span>
+}
+
+func (a *Account) validateBalance() error <span class="cov10" title="6">{
+        if a.balance &lt; 0 </span><span class="cov4" title="2">{
+                return errors.New("value of \"balance\" field should be greater than or equal zero")
+        }</span>
+
+        <span class="cov7" title="4">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package model
+
+import (
+        "errors"
+        "strings"
+)
+
+const (
+        BetStateWin  = "win"
+        BetStateLost = "lost"
+)
+
+type Bet struct {
+        accountID     string
+        state         string
+        amount        float64
+        transactionID string
+}
+
+func NewBet(accountID string, state string, amount float64, transactionID string) *Bet <span class="cov6" title="4">{
+        return &amp;Bet{accountID: accountID, state: state, amount: amount, transactionID: transactionID}
+}</span>
+
+func (b *Bet) AccountID() string <span class="cov3" title="2">{
+        return b.accountID
+}</span>
+
+func (b *Bet) State() string <span class="cov3" title="2">{
+        return b.state
+}</span>
+
+func (b *Bet) Amount() float64 <span class="cov3" title="2">{
+        return b.amount
+}</span>
+
+func (b *Bet) TransactionID() string <span class="cov3" title="2">{
+        return b.transactionID
+}</span>
+
+func (b *Bet) IsWin() bool <span class="cov4" title="3">{
+        return b.state == BetStateWin
+}</span>
+
+func (b *Bet) IsLost() bool <span class="cov4" title="3">{
+        return b.state == BetStateLost
+}</span>
+
+func GetAvailableStates() []string <span class="cov8" title="9">{
+        return []string{
+                BetStateWin,
+                BetStateLost,
+        }
+}</span>
+
+func (b *Bet) Validate() error <span class="cov8" title="7">{
+        if err := b.validateAccountID(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov7" title="6">if err := b.validateTransactionID(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov6" title="5">if err := b.validateState(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov6" title="4">if err := b.validateAmount(); err != nil </span><span class="cov3" title="2">{
+                return err
+        }</span>
+
+        <span class="cov3" title="2">return nil</span>
+}
+
+func (b *Bet) validateAccountID() error <span class="cov9" title="10">{
+        if b.accountID == "" </span><span class="cov3" title="2">{
+                return errors.New("value of \"accountID\" field can't be empty")
+        }</span>
+
+        <span class="cov8" title="8">return nil</span>
+}
+
+func (b *Bet) validateTransactionID() error <span class="cov8" title="9">{
+        if b.transactionID == "" </span><span class="cov3" title="2">{
+                return errors.New("value of \"TransactionID\" field can't be empty")
+        }</span>
+
+        <span class="cov8" title="7">return nil</span>
+}
+
+func (b *Bet) validateState() error <span class="cov8" title="8">{
+        availableStates := GetAvailableStates()
+        for i := range availableStates </span><span class="cov10" title="12">{
+                if b.state == availableStates[i] </span><span class="cov7" title="6">{
+                        return nil
+                }</span>
+        }
+
+        <span class="cov3" title="2">return errors.New("value of \"state\" field should be on of the following values: " + strings.Join(availableStates, ", "))</span>
+}
+
+func (b *Bet) validateAmount() error <span class="cov8" title="8">{
+        if b.amount &lt;= 0 </span><span class="cov6" title="4">{
+                return errors.New("value of \"amount\" field should be greater than zero")
+        }</span>
+
+        <span class="cov6" title="4">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package model
+
+import (
+        "errors"
+        "strings"
+        "time"
+)
+
+const (
+        TransactionStatusExecuted = "executed"
+        TransactionStatusCanceled = "canceled"
+
+        TransactionSourceGame    = "game"
+        TransactionSourceServer  = "server"
+        TransactionSourcePayment = "payment"
+)
+
+type Transaction struct {
+        id        string
+        accountID string
+        amount    float64
+        status    string
+        source    string
+        createdAt time.Time
+        updatedAt time.Time
+}
+
+func NewTransaction(id string, accountID string, amount float64, status string, source string) *Transaction <span class="cov6" title="4">{
+        return &amp;Transaction{
+                id:        id,
+                accountID: accountID,
+                amount:    amount,
+                status:    status,
+                source:    source,
+                createdAt: time.Now(),
+                updatedAt: time.Now(),
+        }
+}</span>
+
+func (t *Transaction) ID() string <span class="cov3" title="2">{
+        return t.id
+}</span>
+
+func (t *Transaction) AccountID() string <span class="cov3" title="2">{
+        return t.accountID
+}</span>
+
+func (t *Transaction) Amount() float64 <span class="cov3" title="2">{
+        return t.amount
+}</span>
+
+func (t *Transaction) Status() string <span class="cov3" title="2">{
+        return t.status
+}</span>
+
+func (t *Transaction) SetStatus(status string) <span class="cov3" title="2">{
+        t.status = status
+        t.updatedAt = time.Now()
+}</span>
+
+func (t *Transaction) Source() string <span class="cov3" title="2">{
+        return t.source
+}</span>
+
+func (t *Transaction) CreatedAt() time.Time <span class="cov3" title="2">{
+        return t.createdAt
+}</span>
+
+func (t *Transaction) SetCreatedAt(createdAt time.Time) <span class="cov6" title="4">{
+        t.createdAt = createdAt
+}</span>
+
+func (t *Transaction) UpdatedAt() time.Time <span class="cov3" title="2">{
+        return t.updatedAt
+}</span>
+
+func (t *Transaction) SetUpdatedAt(updatedAt time.Time) <span class="cov6" title="4">{
+        t.updatedAt = updatedAt
+}</span>
+
+func GetAvailableStatuses() []string <span class="cov8" title="8">{
+        return []string{
+                TransactionStatusExecuted,
+                TransactionStatusCanceled,
+        }
+}</span>
+
+func GetAvailableSources() []string <span class="cov8" title="7">{
+        return []string{
+                TransactionSourceGame,
+                TransactionSourceServer,
+                TransactionSourcePayment,
+        }
+}</span>
+
+func (t *Transaction) Validate() error <span class="cov8" title="7">{
+        if err := t.validateID(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov7" title="6">if err := t.validateAccountID(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov6" title="5">if err := t.validateAmount(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov6" title="4">if err := t.validateStatus(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov4" title="3">if err := t.validateSource(); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov3" title="2">return nil</span>
+}
+
+func (t *Transaction) validateID() error <span class="cov9" title="10">{
+        if t.id == "" </span><span class="cov3" title="2">{
+                return errors.New("value of \"ID\" field can't be empty")
+        }</span>
+
+        <span class="cov8" title="8">return nil</span>
+}
+
+func (t *Transaction) validateAccountID() error <span class="cov8" title="9">{
+        if t.accountID == "" </span><span class="cov3" title="2">{
+                return errors.New("value of \"accountID\" field can't be empty")
+        }</span>
+
+        <span class="cov8" title="7">return nil</span>
+}
+
+func (t *Transaction) validateAmount() error <span class="cov8" title="8">{
+        if t.amount == 0 </span><span class="cov3" title="2">{
+                return errors.New("value of \"amount\" field can't be zero")
+        }</span>
+
+        <span class="cov7" title="6">return nil</span>
+}
+
+func (t *Transaction) validateStatus() error <span class="cov8" title="7">{
+        availableStatuses := GetAvailableStatuses()
+        for i := range availableStatuses </span><span class="cov10" title="12">{
+                if t.status == availableStatuses[i] </span><span class="cov6" title="5">{
+                        return nil
+                }</span>
+        }
+
+        <span class="cov3" title="2">return errors.New("value of \"status\" field should be on of the following values: " + strings.Join(availableStatuses, ", "))</span>
+}
+
+func (t *Transaction) validateSource() error <span class="cov7" title="6">{
+        availableSources := GetAvailableSources()
+        for i := range availableSources </span><span class="cov10" title="12">{
+                if t.source == availableSources[i] </span><span class="cov6" title="4">{
+                        return nil
+                }</span>
+        }
+
+        <span class="cov3" title="2">return errors.New("value of \"source\" field should be on of the following values: " + strings.Join(availableSources, ", "))</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package service
+
+import (
+        "github.com/MGerasimchuk/bet-api/internal/domain/model"
+        "github.com/MGerasimchuk/bet-api/internal/domain/repository"
+)
+
+type ChangeAccountBalanceService struct {
+        transactionalChangeAccountBalanceRepoGenerator repository.TransactionalChangeAccountBalanceRepositoryGenerator
+}
+
+func NewChangeAccountBalanceService(transactionalChangeAccountBalanceRepoGenerator repository.TransactionalChangeAccountBalanceRepositoryGenerator) *ChangeAccountBalanceService <span class="cov0" title="0">{
+        return &amp;ChangeAccountBalanceService{transactionalChangeAccountBalanceRepoGenerator: transactionalChangeAccountBalanceRepoGenerator}
+}</span>
+
+func (u *ChangeAccountBalanceService) IncreaseBalance(account *model.Account, transactionID string, transactionAmount float64, transactionSource string) error <span class="cov10" title="4">{
+        transactionalChangeAccountBalanceUnitRepo := u.transactionalChangeAccountBalanceRepoGenerator()
+
+        if err := transactionalChangeAccountBalanceUnitRepo.StartOperation(); err != nil </span><span class="cov0" title="0">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov10" title="4">if err := transactionalChangeAccountBalanceUnitRepo.GetAccountRepository().IncreaseBalance(account, transactionAmount); err != nil </span><span class="cov1" title="1">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov8" title="3">t := model.NewTransaction(transactionID, account.ID(), transactionAmount, model.TransactionStatusExecuted, transactionSource)
+        if err := t.Validate(); err != nil </span><span class="cov5" title="2">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov1" title="1">if err := transactionalChangeAccountBalanceUnitRepo.GetTransactionRepository().Create(t); err != nil </span><span class="cov0" title="0">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov1" title="1">return transactionalChangeAccountBalanceUnitRepo.FinalOperation(nil)</span>
+}
+
+func (u *ChangeAccountBalanceService) DecreaseBalance(account *model.Account, transactionID string, transactionAmount float64, transactionSource string) error <span class="cov5" title="2">{
+        transactionalChangeAccountBalanceUnitRepo := u.transactionalChangeAccountBalanceRepoGenerator()
+
+        if err := transactionalChangeAccountBalanceUnitRepo.StartOperation(); err != nil </span><span class="cov0" title="0">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov5" title="2">if err := transactionalChangeAccountBalanceUnitRepo.GetAccountRepository().DecreaseBalance(account, transactionAmount); err != nil </span><span class="cov1" title="1">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov1" title="1">t := model.NewTransaction(transactionID, account.ID(), -1*transactionAmount, model.TransactionStatusExecuted, transactionSource)
+        if err := t.Validate(); err != nil </span><span class="cov0" title="0">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov1" title="1">if err := transactionalChangeAccountBalanceUnitRepo.GetTransactionRepository().Create(t); err != nil </span><span class="cov0" title="0">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov1" title="1">return transactionalChangeAccountBalanceUnitRepo.FinalOperation(nil)</span>
+}
+
+func (u *ChangeAccountBalanceService) CancelTransaction(transaction *model.Transaction) error <span class="cov0" title="0">{
+        transactionalChangeAccountBalanceUnitRepo := u.transactionalChangeAccountBalanceRepoGenerator()
+
+        if err := transactionalChangeAccountBalanceUnitRepo.StartOperation(); err != nil </span><span class="cov0" title="0">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov0" title="0">account, err := transactionalChangeAccountBalanceUnitRepo.GetAccountRepository().FindByID(transaction.AccountID())
+        if err != nil </span><span class="cov0" title="0">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov0" title="0">if err := transactionalChangeAccountBalanceUnitRepo.GetAccountRepository().DecreaseBalance(account, transaction.Amount()); err != nil </span><span class="cov0" title="0">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov0" title="0">if err := transactionalChangeAccountBalanceUnitRepo.GetTransactionRepository().UpdateStatus(transaction, model.TransactionStatusCanceled); err != nil </span><span class="cov0" title="0">{
+                return transactionalChangeAccountBalanceUnitRepo.FinalOperation(err)
+        }</span>
+
+        <span class="cov0" title="0">return transactionalChangeAccountBalanceUnitRepo.FinalOperation(nil)</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
